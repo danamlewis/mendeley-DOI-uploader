@@ -43,3 +43,8 @@ Copy the AUTHORIZATION_CODE from the URL and stick it somewhere.
 3. Update the `dois_file` variable to the path of your text file containing the list of DOIs (if you made it in a different file, also check to make sure it matches the name you gave it).
 4. Run the script from the command line: `python upload-DOI-to-library.py`.
 5. The script will import each document with the available metadata to your Mendeley library. You can open your library in a browser and watch them get added as it syncs; you can also see a list of all the DOIs it added via the command line.
+
+Example output when the script successfully finishes:
+
+<img width="545" alt="Screen Shot 2023-03-24 at 12 34 12 PM" src="https://user-images.githubusercontent.com/7468165/227631900-470fa129-2910-4923-936f-57066aa8c3d7.png">
+
