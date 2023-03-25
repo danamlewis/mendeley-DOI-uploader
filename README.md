@@ -50,3 +50,7 @@ Example output when the script successfully finishes:
 
 <img width="545" alt="Screen Shot 2023-03-24 at 12 34 12 PM" src="https://user-images.githubusercontent.com/7468165/227631900-470fa129-2910-4923-936f-57066aa8c3d7.png">
 
+
+## Tips
+
+* You may need to repeat step two to run `get-mendeley-token.py` again and generate an updated access token, and updated it in step 5's script (`upload-DOI-to-library.py`) before running it again if it has been a few hours or more since you last ran the script.
