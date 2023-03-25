@@ -41,8 +41,12 @@ def create_document(doi, metadata, access_token):
     else:
         print(f'Error creating document with DOI {doi}:', response.status_code, response.text)
 
-# Make sure to replace AUTHORIZATION_CODE with the code you got from Mendeley, and make sure your DOI text file matches the name you gave it.
-access_token = 'AUTHORIZATION_CODE'
+def read_access_token_from_file(filename='access_token.txt'):
+    with open(filename, 'r') as file:
+        return file.read().strip()
+
+# Note that this is reading the token generated from get-mendeley-token.py
+access_token = read_access_token_from_file()
 dois_file = 'dois.txt'
 
 with open(dois_file, 'r') as file:
