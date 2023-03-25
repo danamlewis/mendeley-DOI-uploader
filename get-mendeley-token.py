@@ -13,10 +13,10 @@ data = {
 }
 
 response = requests.post('https://api.mendeley.com/oauth/token', data=data)
-
 if response.status_code == 200:
     access_token = response.json()['access_token']
-    print('Access token:', access_token)
+    with open('access_token.txt', 'w') as file:
+        file.write(access_token)
+    print('Access token saved to access_token.txt')
 else:
     print('Error:', response.status_code, response.text)
-
