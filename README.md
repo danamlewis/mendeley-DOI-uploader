@@ -14,42 +14,31 @@ This repository provides a step-by-step guide and Python scripts to add document
    - Redirect URL: Use `https://localhost` for personal use.
 6. Click "Create App" to finish the process.
 
-You should see an ID number (e.g. 1234, which is you Client_ID), your app name, and the Client_Secret. You'll  need the Client_ID and Client-Secret.
+You should see an ID number (e.g. 1234, which is you Client_ID), your app name, and the Client_Secret. You'll  need the Client_ID and Client-Secret. 
 
-## 2. Get an access token 
-
-Open your browser. Paste this URL, and put in your client ID (four digit number) where it says 'YOUR_CLIENT_ID':
-`https://api.mendeley.com/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=http://localhost&response_type=code&scope=all`
-
-It will return an error page but look at the browser URL bar again. Mendeley will redirect you to a URL that looks like http://localhost/?code=AUTHORIZATION_CODE. 
-
-Copy the AUTHORIZATION_CODE from the URL.
-
-Then, paste it in to `get-mendeley-token.py` along with your Client_ID and your Client_Secret. Make sure to save the file, then run it (`python get-mendeley-token.py`). This will save a generated access token to a text file to be used automatically by the script in step 5.
-
-## 3. Extract DOIs from text using ChatGPT
+## 2. Extract DOIs from text using ChatGPT
 
 1. Use ChatGPT, ask it to "Make a list of DOIs from this paragraph" (or notes or whatever), followed by pasting in the paragraph. 
 2. Copy the extracted DOIs for use in the next step.
 
-## 4. Create a text file with the DOI list
+## 3. Create a text file with the DOI list
 
 1. Open your terminal and create a new text file, e.g. `vi dois.txt`
 2. Paste the extracted DOIs into the file, one per line.
 3. Make sure to save the file with a `.txt` extension (e.g., `dois.txt`).
 
-## 5. Use the script to import DOIs to Mendeley
+## 4. Use the script to import DOIs to Mendeley
 
 1. Clone this repository or download the Python script `upload-DOI-to-library.py`.
-2. Update the `dois_file` variable to the path of your text file containing the list of DOIs (if you made it in a different file, also check to make sure it matches the name you gave it).
-3. Run the script from the command line: `python upload-DOI-to-library.py`.
-4. The script will use the access token (generated in step 2) to import each document with the available metadata to your Mendeley library. You can open your library in a browser and watch them get added as it syncs; you can also see a list of all the DOIs it added via the command line.
+2. Open the `upload-DOI-to-library.py` file and swap in your client ID, client secret, and your email and password for Mendeley. Make sure to save.
+3. Update the `dois_file` variable to the path of your text file containing the list of DOIs (if you made it in a different file, also check to make sure it matches the name you gave it).
+4. Run the script from the command line: `python upload-DOI-to-library.py`.
+
+*Note*: you may also need to `pip install selenium` and also download a [Chrome webdriver](https://sites.google.com/chromium.org/driver/home) if you don't already have it. (The download is as simple as clicking the download button and opening the zip file). You may also need to eventually `pip install webdriver` if it gives you an error.
+
+5. The script will open a Chrome window and you'll watch it log in for you and then close the browser window automatically. This generates an authorization code that's then used to generate an access token automatically. This lasts for an hour. 
+6. The script will then attempt to import each document with the available metadata to your Mendeley library. You can open your library in a browser and watch them get added as it syncs; you can also see a list of all the DOIs it added via the command line.
 
 Example output when the script successfully finishes:
 
 <img width="545" alt="Screen Shot 2023-03-24 at 12 34 12 PM" src="https://user-images.githubusercontent.com/7468165/227631900-470fa129-2910-4923-936f-57066aa8c3d7.png">
-
-
-## Tips
-
-* You may need to repeat step two to run `get-mendeley-token.py` again and generate an updated access token before running it again if it has been a few hours or more since you last ran the script.
