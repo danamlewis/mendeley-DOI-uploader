@@ -1,6 +1,7 @@
 import requests
 import importlib
 import time
+import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -19,6 +20,25 @@ redirect_uri = 'http://localhost'
 #Input your Mendeley credentials
 email = 'YOUR-EMAIL'
 password = 'YOUR-MENDELEY-PASSWORD'
+
+def get_access_token():
+    filename = 'access_token.txt'
+    if os.path.exists(filename):
+        mod_time = os.path.getmtime(filename)
+        elapsed_time = time.time() - mod_time
+        if elapsed_time < 3590:
+            print('Access token is still valid; proceeding.')
+            with open(filename, 'r') as f:
+                access_token = f.read().strip()
+            return access_token
+        else:
+            print('Access token has expired; running authorization flow first.')
+    else:
+        print('Access token not found')
+        return None
+
+# Get the access token
+access_token = get_access_token()
 
 # Define function to get Mendeley authorization code using Selenium
 def get_authorization_code(client_id, redirect_uri, email, password):
@@ -81,37 +101,29 @@ def get_authorization_code(client_id, redirect_uri, email, password):
         driver.quit()
         return None
 
+if access_token is None:
 # Get the authorization code
-authorization_code = get_authorization_code(client_id, redirect_uri, email, password)
+    authorization_code = get_authorization_code(client_id, redirect_uri, email, password)
 
-data = {
-    'grant_type': 'authorization_code',
-    'client_id': client_id,
-    'client_secret': client_secret,
-    'code': authorization_code,
-    'redirect_uri': 'http://localhost',
-}
-
-response = requests.post('https://api.mendeley.com/oauth/token', data=data)
-
-if response.status_code == 200:
-    access_token = response.json()['access_token']
-    with open('access_token.txt', 'w') as file:
-        file.write(access_token)
-    print('Access token saved to access_token.txt')
-else:
-    print('Error:', response.status_code, response.text)
-
-def get_document_metadata(doi, access_token):
-    headers = {
-        'Authorization': f'Bearer {access_token}',
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'code': authorization_code,
+        'redirect_uri': 'http://localhost',
     }
-    response = requests.get(f'https://api.mendeley.com/catalog?doi={doi}&view=stats', headers=headers)
+
+    response = requests.post('https://api.mendeley.com/oauth/token', data=data)
+
     if response.status_code == 200:
-        return response.json()[0]
+        access_token = response.json()['access_token']
+        with open('access_token.txt', 'w') as file:
+            file.write(access_token)
+        print('Access token saved to access_token.txt')
     else:
-        print('Error fetching document metadata:', response.status_code, response.text)
-        return None
+        print('Error:', response.status_code, response.text)
+else:
+    print('Using existing access token')
 
 def document_exists(doi, access_token):
     headers = {
@@ -157,8 +169,6 @@ def create_document(doi, metadata, access_token):
 def read_access_token_from_file(filename='access_token.txt'):
     with open(filename, 'r') as file:
         return file.read().strip()
-
-access_token = read_access_token_from_file()
 
 dois_file = 'dois.txt'
 
